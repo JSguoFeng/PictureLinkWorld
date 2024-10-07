@@ -5,5 +5,8 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="all_text">源素</string>"
+    <string name="book_text">册子</string>
+    <string name="share_text">分享</string>"
 
 </resources>

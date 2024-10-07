@@ -3,9 +3,11 @@ package com.guofeng.appcore;
 import static com.guofeng.tools.MyCreateTool.dpToPx;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CancellationSignal;
 import android.util.Size;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,7 @@ public class CreateView {
         this.context = context;
         this.layoutParams = new ViewGroup.LayoutParams(dpToPx(context,100),dpToPx(context,100));
     }
-    public ImageView createImageView(String path) throws IOException {
+    public ImageView createImageView( String path) throws IOException {
         ImageView imageView1 =new ImageView(context);
         imageView1.setScaleType(ImageView.ScaleType.FIT_CENTER);
         imageView1.setScaleType(ImageView.ScaleType.CENTER);

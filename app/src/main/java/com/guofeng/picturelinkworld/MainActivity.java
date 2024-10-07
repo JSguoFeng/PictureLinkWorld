@@ -7,12 +7,19 @@ import android.content.ContentUris;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.guofeng.appcore.CreateView;
 import com.guofeng.appcore.Image;
+
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Size;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -29,6 +36,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.picturelinkworld.R;
 import com.guofeng.appcore.Thumbnails;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             getPermission(this);
         }
+        getWindow().setStatusBarColor(Color.WHITE);
         GridLayout gridLayout = findViewById(R.id.image_grid);
         ContentResolver contentResolver = this.getContentResolver();
         List<Image> images = new ArrayList<>();
@@ -70,13 +79,22 @@ public class MainActivity extends AppCompatActivity {
             String path = cursor.getString(pathColumn);
             int duration = cursor.getInt(durationColumn);
             int size = cursor.getInt(sizeColumn);
-            Uri contentUri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+            Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
             images.add(new Image(name,path,contentUri,duration,size));
         }
         FrameLayout frameLayout = findViewById(R.id.display_image);
         ImageView imageView = findViewById(R.id.this_image);
         CreateView createView = new CreateView(this, frameLayout, imageView);
+        Size size = new Size(640,480);
+        for(int i =0;i<80;i++){
+            try {
+                ImageView imageViewNow = createView.createImageView(images.get(i).getPath());
+                Glide.with(this).load(images.get(i).getUri()).thumbnail(Glide.with(this).load(images.get(i).getPath())).into(imageViewNow);
+                gridLayout.addView(imageViewNow);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
