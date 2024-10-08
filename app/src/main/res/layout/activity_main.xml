@@ -12,23 +12,15 @@
         android:layout_height="match_parent">
 
 
-
-        <ScrollView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
-            android:orientation="vertical">
+            android:layout_marginTop="60dp"
+            android:id="@+id/all_fragment"
+            android:contentDescription="@string/app_name">
 
-            <GridLayout
-                android:id="@+id/image_grid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="4"
-                android:layout_marginTop="100dp"
-                android:orientation="horizontal">
 
-            </GridLayout>
-        </ScrollView>
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/display_image"
@@ -60,16 +52,18 @@
                 android:id="@+id/search_button"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="50dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/white"
-                android:layout_gravity="center"
                 android:contentDescription="@string/app_name"
                 android:scaleType="fitCenter"
-                android:src="@drawable/baseline_search_24" />
+                android:src="@drawable/baseline_search_24"
+                tools:ignore="TouchTargetSizeCheck" />
            <TextView
+               android:id="@+id/all_text"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="@string/all_text"
@@ -80,6 +74,7 @@
                android:textColor="@color/black"
                android:textSize="20sp"/>
             <TextView
+                android:id="@+id/book_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/book_text"
@@ -90,6 +85,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"/>
             <TextView
+                android:id="@+id/share_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/share_text"
@@ -99,6 +95,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="20sp"/>
+
             <ImageButton
                 android:id="@+id/overflow_button"
                 android:layout_width="30dp"
@@ -108,7 +105,8 @@
                 android:background="@color/white"
                 android:contentDescription="@string/app_name"
                 android:scaleType="fitCenter"
-                android:src="@drawable/baseline_segment_24" />
+                android:src="@drawable/baseline_segment_24"
+                tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

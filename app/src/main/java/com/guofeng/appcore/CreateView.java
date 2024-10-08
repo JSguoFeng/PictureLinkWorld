@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -37,8 +39,8 @@ public class CreateView {
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                imageView.setImageURI(Uri.parse(path));
-                frameLayout.setVisibility(View.VISIBLE);
+                Glide.with(context).load(path).into(imageView);
+               frameLayout.setVisibility(View.VISIBLE);
             }
         });
         return imageView1;

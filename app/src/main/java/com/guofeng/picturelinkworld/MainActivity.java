@@ -2,27 +2,15 @@ package com.guofeng.picturelinkworld;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentUris;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.guofeng.appcore.CreateView;
-import com.guofeng.appcore.Image;
-
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Size;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.ImageView;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
@@ -32,17 +20,18 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.picturelinkworld.R;
-import com.guofeng.appcore.Thumbnails;
+import com.guofeng.AllFragment;
+import com.guofeng.BookFragment;
+import com.guofeng.ShareFragment;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
-
+public class    MainActivity extends AppCompatActivity {
+    private GestureDetector gestureDetector;
+    private MyGestureListener myGestureListener;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -55,48 +44,55 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             getPermission(this);
         }
+        myGestureListener = new MyGestureListener();
+        gestureDetector = new GestureDetector(this, myGestureListener);
         getWindow().setStatusBarColor(Color.WHITE);
-        GridLayout gridLayout = findViewById(R.id.image_grid);
-        ContentResolver contentResolver = this.getContentResolver();
-        List<Image> images = new ArrayList<>();
-        String[] projection = new String[]{
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DURATION,
-                MediaStore.Images.Media.SIZE
-        };
-        Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        assert cursor != null;
-        int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-        int pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        int idColumn =  cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-        int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DURATION);
-        int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
-        while(cursor.moveToNext()){
-            String name = cursor.getString(nameColumn);
-            long id = cursor.getLong(idColumn);
-            String path = cursor.getString(pathColumn);
-            int duration = cursor.getInt(durationColumn);
-            int size = cursor.getInt(sizeColumn);
-            Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-            images.add(new Image(name,path,contentUri,duration,size));
-        }
-        FrameLayout frameLayout = findViewById(R.id.display_image);
-        ImageView imageView = findViewById(R.id.this_image);
-        CreateView createView = new CreateView(this, frameLayout, imageView);
-        Size size = new Size(640,480);
-        for(int i =0;i<80;i++){
-            try {
-                ImageView imageViewNow = createView.createImageView(images.get(i).getPath());
-                Glide.with(this).load(images.get(i).getUri()).thumbnail(Glide.with(this).load(images.get(i).getPath())).into(imageViewNow);
-                gridLayout.addView(imageViewNow);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+        ImageButton searchButton = findViewById(R.id.search_button);
+        searchButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
+        TextView textViewAll = findViewById(R.id.all_text);
+        TextView textViewBook = findViewById(R.id.book_text);
+        TextView textViewShare = findViewById(R.id.share_text);
+        replaceFragment(new AllFragment());
+        textViewAll.setOnClickListener(v -> {
+            textViewAll.setTextColor(Color.BLUE);
+            textViewBook.setTextColor(Color.BLACK);
+            textViewShare.setTextColor(Color.BLACK);
+            replaceFragment(new AllFragment());
 
+        });
+        textViewBook.setOnClickListener(v -> {
+            textViewAll.setTextColor(Color.BLACK);
+            textViewBook.setTextColor(Color.BLUE);
+            textViewShare.setTextColor(Color.BLACK);
+            replaceFragment(new BookFragment());
+        });
+        textViewShare.setOnClickListener(v -> {
+            textViewAll.setTextColor(Color.BLACK);
+            textViewBook.setTextColor(Color.BLACK);
+            textViewShare.setTextColor(Color.BLUE);
+            replaceFragment(new ShareFragment());
+        });
+
+
+    }
+    public void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager =getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.all_fragment,fragment);
+        fragmentTransaction.commit();
+    }
+    public boolean onTouchEvent(MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+    }
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                System.out.println(e1+" "+e2);
+                return true;
+            }
+    }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     public static void getPermission(Activity activity) {
 //      检查权限
